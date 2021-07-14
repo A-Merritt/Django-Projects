@@ -13,7 +13,16 @@
             <h1>Add A New Show</h1>
             <a href="/shows">Go Back</a>
         </div>
-        <form action="/shows/new" method="POST">
+        
+{% if messages %}
+<ul class="messages">    
+    {% for message in messages %}    
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>    
+    {% endfor %}
+</ul>
+{% endif %}
+
+        <form action="/shows/create" method="POST">
             {% csrf_token %}
             <p>Title: <input name="title" type="text"></p>
             <p>Network: <input name="network" type="text"></p>
@@ -21,6 +30,7 @@
             <p>Description: <input name="description" type="text"></p>
             <button type="submit">Create</button>
         </form>
+        
     </div>
 </body>
 </html>

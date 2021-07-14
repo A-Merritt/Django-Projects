@@ -4,24 +4,25 @@ from django.contrib import messages
 
 # Create your views here.
 def index(request):
-    return redirect('/shows/new')
+    return redirect('/shows')
 
-def addshow(request):
+def create(request):
     errors = Show.objects.basic_validator(request.POST)
     if len(errors) > 0:
         for key, value in errors.items():
             messages.error(request, value)
-        return redirect('/shows')
-    
-    
-    elif (request.method =="POST"):
+        return redirect('/shows/new')
+
+    if (request.method =="POST"):
         Show.objects.create(
             title = request.POST["title"],
             network = request.POST["network"],
             date = request.POST["date"],
             description = request.POST["description"]
         )
-        return redirect('/shows/new')
+        return redirect(f'/shows/{Show.objects.last().id}')
+
+def addshow(request):
     context = {
         'shows': Show.objects.all()
     }
@@ -41,9 +42,6 @@ def edit(request, Show_id):
     }
     return render(request, 'update.html', context)
 
-def destroy(request):
-    pass
-
 def shows(request):
     context = {
         'shows': Show.objects.all()
@@ -56,10 +54,17 @@ def destroy(request, Show_id):
     return redirect('/shows')
 
 def update(request, Show_id):
+    errors = Show.objects.basic_validator(request.POST)
+    if len(errors) > 0:
+        for key, value in errors.items():
+            messages.error(request, value)
+        return redirect(f'/shows/{Show_id}/edit')
+
     to_update = Show.objects.get(id=Show_id)
     to_update.title = request.POST['title']
     to_update.network = request.POST['network']
     to_update.date = request.POST['date']
     to_update.description = request.POST['description']
+    to_update.save()
 
-    return redirect('/shows')
+    return redirect(f'/shows/{Show_id}')

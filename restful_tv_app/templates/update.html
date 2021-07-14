@@ -8,13 +8,22 @@
     {% load static %}
 </head>
 <body>
-    <h1>Edit Show 2</h1>
+    <h1>Edit Show</h1>
     <a href="/shows">Go Back</a>
-    <form action="/shows/{{show.id}}/edit" method="POST">
+
+{% if messages %}
+<ul class="messages">    
+    {% for message in messages %}    
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>    
+    {% endfor %}
+</ul>
+{% endif %}
+
+    <form action="/shows/{{show.id}}/update" method="POST">
         {% csrf_token %}
         <p>Title: <input name="title" type="text" value={{show.title}}></p>
         <p>Network: <input name="network" type="text" value={{show.network}}></p>
-        <p>Release Date: <input name="date" type="date" value={{show.date}}></p>
+        <p>Release Date: <input name="date" type="date" value="{{show.date|date:'Y-m-d'}}"></p>
         <p>Description: <input name="description" type="text" value={{show.description}}></p>
         <button type="submit">Update</button>
     </form>
